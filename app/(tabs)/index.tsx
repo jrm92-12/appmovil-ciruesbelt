@@ -1,98 +1,143 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { signOut } from 'firebase/auth';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { auth } from '@/src/firebase/firebase';
+import { signOutGoogleSession } from '@/src/auth/use-google-auth';
+import { useAuth } from '@/src/providers/auth-provider';
 
-export default function HomeScreen() {
+export default function DashboardScreen() {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOutGoogleSession();
+      await signOut(auth);
+      router.replace('/login');
+    } catch (error) {
+      console.log(error);
+      Alert.alert('No se pudo cerrar sesion', 'Intenta nuevamente.');
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <ThemedView style={styles.screen}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <View style={styles.banner}>
+          <ThemedText style={styles.kicker}>Clinica Ciruesbelt</ThemedText>
+          <ThemedText type="title" style={styles.title}>
+            Panel de atencion y cola de espera
+          </ThemedText>
+          <ThemedText style={styles.subtitle}>
+            Visualiza y solicita tu cita del dia con alegria!
+          </ThemedText>
+        </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <View style={styles.cards}>
+          <View style={styles.card}>
+            <ThemedText type="subtitle">Ingresaste con:</ThemedText>
+            <ThemedText style={styles.cardText}>{user?.email ?? 'Sin correo disponible'}</ThemedText>
+          </View>
+
+          <View style={styles.card}>
+            <ThemedText type="subtitle">Importante:</ThemedText>
+            <ThemedText style={styles.cardText}>
+              Las citas se podran programar en distancias de 30 minutos, a las ya registradas.
+            </ThemedText>
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.primaryButton} onPress={() => router.push('/citas' as never)}>
+          <ThemedText style={styles.primaryButtonText}>Registrar una cita</ThemedText>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.signOutButton} onPress={() => void handleSignOut()}>
+          <ThemedText style={styles.signOutText}>Me largo!</ThemedText>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  screen: {
+    flex: 1,
+    backgroundColor: '#fff3f8',
+  },
+  safeArea: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+  },
+  banner: {
+    padding: 24,
+    borderRadius: 28,
+    backgroundColor: '#f08bb1',
+    marginBottom: 22,
+    
+  },
+  kicker: {
+    color: '#fff2f8',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+    marginBottom: 10,
+    fontSize: 29,
+    lineHeight: 34,
+    
+  },
+  title: {
+    color: '#ffffff',
+    marginBottom: 10,
+    fontSize: 24,
+    lineHeight: 20,
+  },
+  subtitle: {
+    color: '#fff6fb',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  cards: {
+    gap: 14,
+    marginBottom: 24,
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 22,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#f5c8d8',
+  },
+  cardText: {
+    marginTop: 8,
+    color: '#85566f',
+  },
+  primaryButton: {
+    backgroundColor: '#df84a8',
+    borderRadius: 18,
+    paddingVertical: 16,
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 12,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  primaryButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  signOutButton: {
+    borderRadius: 18,
+    paddingVertical: 16,
+    alignItems: 'center',
+    backgroundColor: '#ffe5ef',
+    borderWidth: 1,
+    borderColor: '#f1bfd3',
+  },
+  signOutText: {
+    color: '#fc3584',
+    fontWeight: '700',
   },
 });

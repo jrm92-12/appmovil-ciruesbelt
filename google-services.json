@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "1028583394125",
+    "firebase_url": "https://app-ciruesbelt-default-rtdb.firebaseio.com",
+    "project_id": "app-ciruesbelt",
+    "storage_bucket": "app-ciruesbelt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028583394125:android:67c86a65194eefa012c504",
+        "android_client_info": {
+          "package_name": "com.ciruesbelt.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1028583394125-601t7aq7csvmdpmqsflvd1k28ankhjn7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ciruesbelt.app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1028583394125-7uscm4g9p9mvieivgqp0kqmurlequdl9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ciruesbelt.app",
+            "certificate_hash": "c00040e74f388c01a138bcc63d90691685dd7177"
+          }
+        },
+        {
+          "client_id": "1028583394125-vk3c3b45rup6k61ondnbh49av99465hn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_GJQBNgsjgDPQvVkiSzkyf0nWiWFvCP4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1028583394125-vk3c3b45rup6k61ondnbh49av99465hn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
