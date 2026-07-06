@@ -1,7 +1,4 @@
-import DateTimePicker, {
-  DateTimePickerAndroid,
-  type DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import {
   endAt,
   get,
@@ -18,7 +15,6 @@ import { useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
-  Platform,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -122,8 +118,6 @@ export default function CitasScreen() {
   const [paciente, setPaciente] = useState("");
   const [motivo, setMotivo] = useState("");
   const [appointmentDate, setAppointmentDate] = useState<Date | null>(null);
-  const [showIosDatePicker, setShowIosDatePicker] = useState(false);
-  const [showIosTimePicker, setShowIosTimePicker] = useState(false);
   const [citas, setCitas] = useState<Cita[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -172,77 +166,41 @@ export default function CitasScreen() {
   const openDatePicker = () => {
     const base = getBaseAppointmentDate();
 
-    if (Platform.OS === "android") {
-      DateTimePickerAndroid.open({
-        value: base,
-        mode: "date",
-        minimumDate: new Date(),
-        onChange: (event, selectedDate) => {
-          if (event.type !== "set" || !selectedDate) {
-            return;
-          }
+    DateTimePickerAndroid.open({
+      value: base,
+      mode: "date",
+      minimumDate: new Date(),
+      onChange: (event, selectedDate) => {
+        if (event.type !== "set" || !selectedDate) {
+          return;
+        }
 
-          handleDateChange(selectedDate);
-        },
-      });
-      return;
-    }
-
-    setShowIosTimePicker(false);
-    setShowIosDatePicker((current) => !current);
+        handleDateChange(selectedDate);
+      },
+    });
   };
 
   const openTimePicker = () => {
     const base = getBaseAppointmentDate();
 
-    if (Platform.OS === "android") {
-      DateTimePickerAndroid.open({
-        value: base,
-        mode: "time",
-        is24Hour: true,
-        onChange: (event, selectedDate) => {
-          if (event.type !== "set" || !selectedDate) {
-            return;
-          }
+    DateTimePickerAndroid.open({
+      value: base,
+      mode: "time",
+      is24Hour: true,
+      onChange: (event, selectedDate) => {
+        if (event.type !== "set" || !selectedDate) {
+          return;
+        }
 
-          handleTimeChange(selectedDate);
-        },
-      });
-      return;
-    }
-
-    setShowIosDatePicker(false);
-    setShowIosTimePicker((current) => !current);
-  };
-
-  const handleIosDateChange = (
-    _event: DateTimePickerEvent,
-    selectedDate?: Date,
-  ) => {
-    if (!selectedDate) {
-      return;
-    }
-
-    handleDateChange(selectedDate);
-  };
-
-  const handleIosTimeChange = (
-    _event: DateTimePickerEvent,
-    selectedDate?: Date,
-  ) => {
-    if (!selectedDate) {
-      return;
-    }
-
-    handleTimeChange(selectedDate);
+        handleTimeChange(selectedDate);
+      },
+    });
   };
 
   const resetForm = () => {
     setPaciente("");
     setMotivo("");
     setAppointmentDate(null);
-    setShowIosDatePicker(false);
-    setShowIosTimePicker(false);
   };
 
   const registrarCita = async () => {
@@ -360,18 +318,6 @@ export default function CitasScreen() {
               </ThemedText>
             </TouchableOpacity>
 
-            {Platform.OS === "ios" && showIosDatePicker ? (
-              <View style={styles.pickerCard}>
-                <DateTimePicker
-                  value={getBaseAppointmentDate()}
-                  mode="date"
-                  display="spinner"
-                  minimumDate={new Date()}
-                  onChange={handleIosDateChange}
-                />
-              </View>
-            ) : null}
-
             <TouchableOpacity
               onPress={openTimePicker}
               style={styles.selectorButton}
@@ -385,18 +331,6 @@ export default function CitasScreen() {
                   : "Seleccionar hora"}
               </ThemedText>
             </TouchableOpacity>
-
-            {Platform.OS === "ios" && showIosTimePicker ? (
-              <View style={styles.pickerCard}>
-                <DateTimePicker
-                  value={getBaseAppointmentDate()}
-                  mode="time"
-                  display="spinner"
-                  is24Hour
-                  onChange={handleIosTimeChange}
-                />
-              </View>
-            ) : null}
 
             <TouchableOpacity
               disabled={isSubmitting}
@@ -510,17 +444,6 @@ const styles = StyleSheet.create({
   selectorValue: {
     color: "#55313f",
     fontSize: 16,
-  },
-  pickerCard: {
-    backgroundColor: "#fffafb",
-    borderRadius: 16,
-    marginTop: -4,
-    marginBottom: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderColor: "#f6c5d8",
-    overflow: "hidden",
   },
   primaryButton: {
     backgroundColor: "#d45d8c",
